@@ -1,5 +1,12 @@
-URL <input
-            type="text"
-            id="settings_url_default"
-            value="<%= settings['url'] %>"
-            name="settings[url]" />
+<div class="box tabular settings">
+<table class="plugin_settings">
+  <tr>
+    <td>URL</td>
+    <td><input type="text" id="settings_url_default" value="<%= settings['url'] %>" name="settings[url]" /></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td id="settings_save_button"><input type="submit" name="commit" value="Применить" class="main-form-button"></td>
+  </tr>
+</table>
+</div>
