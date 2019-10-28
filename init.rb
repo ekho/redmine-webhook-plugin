@@ -10,5 +10,5 @@ Redmine::Plugin.register :webhook do
   project_module :webhook do
     permission :manage_webhook, :webhook => :webhook
   end
-  settings :default => {:empty => true}, :partial => 'webhook/webhook'
+  settings :default => {:empty => true}, :partial => 'webhook/settings'
 end
