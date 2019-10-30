@@ -1,4 +1,7 @@
 require 'net/http'
+require 'rainbow'
+
+Rainbow.enabled = Rails.application.config.colorize_logging || false
 
 module Webhook
   class WebhookListener < Redmine::Hook::Listener
@@ -45,21 +48,33 @@ module Webhook
               'Content-Type' => 'application/jso n',
               'X-Redmine-Event' => 'Edit Issue',
           }
-          Rails.logger.debug "[WEBHOOK] url: #{url.inspect} (#{URI.split(url.to_s)})"
-          Rails.logger.debug "[WEBHOOK] headers: #{headers.inspect}"
+
+          log_debug("url: #{url.inspect} (#{URI.split(url.to_s)})")
+          log_debug("headers: #{headers.inspect}")
           req = Net::HTTP::Post.new(url.request_uri, headers)
           req.body = request_body
-          Rails.logger.debug "[WEBHOOK] req: #{req.inspect}"
+          log_debug("req: #{req.inspect}")
           http = Net::HTTP.new(url.host, url.port)
           http.use_ssl = (url.scheme == "https")
-          Rails.logger.debug "[WEBHOOK] http: #{http.inspect}"
+          log_debug("http: #{http.inspect}")
           response = http.request(req)
-          Rails.logger.debug "[WEBHOOK] response: #{response.inspect}"
+          log_debug("response: #{response.inspect}")
         rescue => e
-          Rails.logger.error e
-          Rails.logger.debug "[WEBHOOK] req failed: #{e.inspect}"
+          log_error("req failed: #{e.to_s}")
         end
       end
+    end
+
+    def log_prefix
+      @log_prefix ||= "[#{self.class.name.split("::").first}] "
+    end
+
+    def log_error(msg)
+      Rails.logger.error(Rainbow(log_prefix).red.bright + msg)
+    end
+
+    def log_debug(msg)
+      Rails.logger.debug(Rainbow(log_prefix).green.bright + msg)
     end
   end
 end
